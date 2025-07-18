@@ -1,0 +1,10 @@
+---
+- name: Ping test from Cisco router
+  hosts: cisco_routers
+  gather_facts: no
+  tasks:
+    - name: Ping Ansible server from router
+      ios_ping:
+        dest: 10.32.20.14
+        count: 2
+
