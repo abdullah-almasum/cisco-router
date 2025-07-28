@@ -2,12 +2,13 @@
 - name: Restore Cisco Router Configuration (apply live)
   hosts: cisco-router-01
   gather_facts: no
+  connection: network_cli
   collections:
     - cisco.ios
     - ansible.netcommon
 
   vars:
-    restore_file: "/home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg"
+    restore_file: "playbooks/backups/{{ inventory_hostname }}_backup.cfg"
 
   tasks:
     - name: Apply backup config live using ios_config

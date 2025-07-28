@@ -3,16 +3,18 @@
   hosts: cisco-router-01
   gather_facts: no
   connection: network_cli
+  collections:
+    - cisco.ios
 
   tasks:
     - name: Backup running configuration
-      cisco.ios.ios_config:
+      ios_config:
         backup: yes
       register: config_backup
 
     - name: Ensure backups directory exists on control node
       file:
-        path: "/home/ansible/cisco_router/backups"
+        path: "playbooks/backups"
         state: directory
         mode: '0755'
       delegate_to: localhost
@@ -21,14 +23,18 @@
     - name: Fetch backup config from router to control node
       fetch:
         src: "{{ config_backup.backup_path }}"
-        dest: "/home/ansible/cisco_router/backups/"
+        dest: "playbooks/backups/"
         flat: yes
 
+    - name: Remove old backup file if exists
+      file:
+        path: "playbooks/backups/{{ inventory_hostname }}_backup.cfg"
+        state: absent
+      delegate_to: localhost
+
     - name: Rename fetched backup file with hostname
-      command: >
-        mv /home/ansible/cisco_router/backups/{{ config_backup.backup_path | basename }}
-           /home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg
+      shell: mv playbooks/backups/{{ config_backup.backup_path | basename }} playbooks/backups/{{ inventory_hostname }}_backup.cfg
       args:
-        removes: "/home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg"
+        creates: "playbooks/backups/{{ inventory_hostname }}_backup.cfg"
       delegate_to: localhost
 
