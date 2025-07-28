@@ -1,7 +1,8 @@
 ---
 - name: Backup Cisco Router Configuration
-  hosts: cisco_routers
+  hosts: cisco-router-01
   gather_facts: no
+  connection: network_cli
 
   tasks:
     - name: Backup running configuration
@@ -9,15 +10,25 @@
         backup: yes
       register: config_backup
 
-    - name: Ensure backups directory exists locally
+    - name: Ensure backups directory exists on control node
       file:
-        path: /home/ansible/cisco_router/backups
+        path: "/home/ansible/cisco_router/backups"
         state: directory
+        mode: '0755'
       delegate_to: localhost
+      run_once: true
 
-    - name: Save backup config locally on control node
-      copy:
-        content: "{{ lookup('file', config_backup.backup_path) }}"
-        dest: "/home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg"
+    - name: Fetch backup config from router to control node
+      fetch:
+        src: "{{ config_backup.backup_path }}"
+        dest: "/home/ansible/cisco_router/backups/"
+        flat: yes
+
+    - name: Rename fetched backup file with hostname
+      command: >
+        mv /home/ansible/cisco_router/backups/{{ config_backup.backup_path | basename }}
+           /home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg
+      args:
+        removes: "/home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg"
       delegate_to: localhost
 

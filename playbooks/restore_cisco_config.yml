@@ -1,6 +1,6 @@
 ---
 - name: Restore Cisco Router Configuration (apply live)
-  hosts: cisco_routers
+  hosts: cisco-router-01
   gather_facts: no
   collections:
     - cisco.ios
