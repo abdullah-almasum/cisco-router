@@ -1,0 +1,165 @@
+Building configuration...
+
+Current configuration : 3676 bytes
+!
+! Last configuration change at 09:43:20 UTC Fri Jul 18 2025
+!
+version 17.15
+service timestamps debug datetime msec
+service timestamps log datetime msec
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip dhcp excluded-address 10.12.42.1 10.12.42.9
+!
+ip dhcp pool ubuntu
+ network 10.12.42.0 255.255.255.0
+ default-router 10.12.42.10 
+ dns-server 8.8.8.8 
+!
+!
+!
+ip domain name deshcyber.com
+ip cef
+login on-success log
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-131184642
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-131184642
+ revocation-check none
+ rsakeypair TP-self-signed-131184642
+ hash sha512
+!
+!
+crypto pki certificate chain TP-self-signed-131184642
+ certificate self-signed 01
+  3082032E 30820216 A0030201 02020101 300D0609 2A864886 F70D0101 0D050030 
+  30312E30 2C060355 04030C25 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 31333131 38343634 32301E17 0D323530 37313730 39333834 
+  355A170D 33353037 31373039 33383435 5A303031 2E302C06 03550403 0C25494F 
+  532D5365 6C662D53 69676E65 642D4365 72746966 69636174 652D3133 31313834 
+  36343230 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 82010A02 
+  82010100 9C33F28E 27371A41 3063C8CB C52EC0E8 D6F0B074 F1362823 92C0FEA0 
+  01231470 50B21D91 F5D56CE5 FB7C7AB2 A755A570 54DAB75B 877534A4 688043E5 
+  52E6801F BA7F958E 30670E96 90A44CBD 676E4D1F C9A9A564 B975B62B 58BA691A 
+  FE9BD392 35EA0622 8E74263C 1C9C7FA4 A186AB60 84F59120 1130E574 267296E2 
+  F4E5D1B5 D8E79D44 B248D8F9 B0AD4B87 B4CC3716 64E050FA B5D20C15 1FF73B69 
+  3FEA57F9 832D349B 1E2459F5 43B0B058 0FE3D52E 5DC1B657 743618D9 AC8F7EDF 
+  A9DA7B99 0F7960DE 48CC3C39 415AD0B6 D1BD8A05 C201953F C150D827 200943DC 
+  4F7BF7F7 AD7E5F1A E4731D32 AAB15FCC 1536B95A 6B8FD0CE 6316511C 0696B91B 
+  FCB1CDCB 02030100 01A35330 51301D06 03551D0E 04160414 F04B8FF6 13605BEE 
+  A78E4EBE A023C61B AB69E912 301F0603 551D2304 18301680 14F04B8F F613605B 
+  EEA78E4E BEA023C6 1BAB69E9 12300F06 03551D13 0101FF04 05300301 01FF300D 
+  06092A86 4886F70D 01010D05 00038201 01009413 325CBECB 033A5DAC 9A7FF260 
+  5DAB4B2C C3C21FD9 2F3B66F9 3A083FE3 4440DE09 EDA70D2E DC1EBB6D C49DEFC2 
+  5C3FC313 8F7963B7 C3AB8E06 906A654E FBE210C2 029EC4C5 13B3E158 B859E591 
+  E0015ED2 094EED89 D40C6450 2345EDD7 6282BE01 23DBEE78 DACC8B26 26EC504D 
+  BF3548E7 4A42DFA2 8DC24C0B 6031F28D 35EC97D0 A8934F62 E89F66B0 698CD907 
+  0A20095B 48933EC6 C26F0884 1BBECF96 BFB7475A F18C1803 C04B6855 30075EC6 
+  CF4879B7 3554A103 C4E48278 BFB8F70D 5E0FB38B C390193E A5DD9561 12F292A9 
+  3C7FAC08 9D6592F7 84E352DD 05C3DCCC 68C4AEDA F5672CC9 E92418DB 53B1CE39 
+  0F141E83 E6CE6ACA FB8ACCE5 79674CB8 6647
+  	quit
+!
+!
+memory free low-watermark processor 80093
+!
+!
+spanning-tree mode rapid-pvst
+!
+!
+username ansible privilege 15 secret 9 $9$b4XZu52jhVH.7E$Qs4csHKZMmjiL1QY8Ag4yBRvbWq071YJ/4G/fJgPyfQ
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ ip address 10.32.20.210 255.255.255.0
+ ip nat outside
+!
+interface Ethernet0/1
+ ip address 10.12.42.10 255.255.255.0
+ ip nat inside
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+ip http server
+ip http secure-server
+ip nat inside source list 1 interface Ethernet0/0 overload
+ip route 0.0.0.0 0.0.0.0 10.32.20.1
+ip ssh bulk-mode 131072
+ip ssh pubkey-chain
+ username ansible
+  key-hash ssh-rsa D0E20E15477B8C42828FD99D35A6643C ansible@AAP2
+no logging btrace
+ip access-list standard 1
+ 10 permit 10.12.42.0 0.0.0.255
+!
+!
+!
+control-plane
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+!
+!
+!
+end
