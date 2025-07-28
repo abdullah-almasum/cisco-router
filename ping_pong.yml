@@ -1,0 +1,14 @@
+---
+- name: Ping test from Cisco router
+  hosts: cisco_routers
+  gather_facts: no
+  tasks:
+    - name: Ping AAP server from Cisco router
+      cisco.ios.ios_command:
+        commands:
+          - ping 10.32.20.14 repeat 4   # Replace with your AAP IP
+      register: ping_result
+
+    - name: Show ping results
+      debug:
+        var: ping_result.stdout_lines
