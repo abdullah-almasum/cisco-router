@@ -1,0 +1,23 @@
+---
+- name: Backup Cisco Router Configuration
+  hosts: cisco_routers
+  gather_facts: no
+
+  tasks:
+    - name: Backup running configuration
+      cisco.ios.ios_config:
+        backup: yes
+      register: config_backup
+
+    - name: Ensure backups directory exists locally
+      file:
+        path: /home/ansible/cisco_router/backups
+        state: directory
+      delegate_to: localhost
+
+    - name: Save backup config locally on control node
+      copy:
+        content: "{{ lookup('file', config_backup.backup_path) }}"
+        dest: "/home/ansible/cisco_router/backups/{{ inventory_hostname }}_backup.cfg"
+      delegate_to: localhost
+
